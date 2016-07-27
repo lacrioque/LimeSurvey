@@ -29,9 +29,11 @@
                 ?>
             </div>
             <div class="col-xs-12 col-sm-8">
+
                 <?php if(!isset($token)): ?>
                 <?php echo CHtml::passwordField('token', '', array(
                     'class' => 'text input-sm form-control '.$sKpClass,
+                    'required' => 'required',
                     'id' => 'token'));
                 ?>
                 <?php else: ?>
@@ -90,6 +92,7 @@
                         <?php echo CHtml::textField('loadsecurity', '', array(
                             'id' => 'captchafield',
                             'class' => 'text input-sm form-control '.$sKpClass,
+                            'required' => 'required'
                         )) ?>
                     </div>
                 </div>
