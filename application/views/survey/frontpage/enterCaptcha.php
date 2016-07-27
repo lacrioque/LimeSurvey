@@ -36,6 +36,7 @@
                         <?php echo CHtml::textField('loadsecurity', '', array(
                             'id' => 'captchafield',
                             'class' => 'text input-sm form-control '.$sKpClass,
+                            'required' => 'required'
                         )) ?>
                     </div>
                 </div>

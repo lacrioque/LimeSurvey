@@ -911,7 +911,6 @@ function buildsurveysession($surveyid,$preview=false)
         "captchaRequired" => (isCaptchaEnabled('surveyaccessscreen',$thissurvey['usecaptcha']) && !isset($_SESSION['survey_'.$surveyid]['captcha_surveyaccessscreen']))
     );
 
-
     /** 
     *   Set subscenarios depending on scenario outcome
     */
@@ -928,12 +927,14 @@ function buildsurveysession($surveyid,$preview=false)
         } else {
             $oTokenEntry = Token::model($surveyid)->usable()->incomplete()->findByAttributes(array('token' => $clienttoken));
         }
+
         $subscenarios['tokenValid'] = isset($oTokenEntry);
     }
     else 
     {
         $subscenarios['tokenValid'] = true;
     }
+
     //Check the scenario for captcha required
     if($scenarios['captchaRequired'])
     {
@@ -953,9 +954,7 @@ function buildsurveysession($surveyid,$preview=false)
     $renderToken = "";
     $renderWay = "";
 
-
     //Define array to render the partials
-
     $aEnterTokenData = array();
     $aEnterTokenData['bNewTest'] =  false;
     $aEnterTokenData['bDirectReload'] =  false;
@@ -963,11 +962,9 @@ function buildsurveysession($surveyid,$preview=false)
     $aEnterTokenData['iSurveyId'] = $surveyid;
     $aEnterTokenData['sKpClass'] = $kpclass; // ???
     $aEnterTokenData['sLangCode'] = $sLangCode;
-
     if (isset($_GET['bNewTest']) && $_GET['newtest'] == "Y"){
         $aEnterTokenData['bNewTest'] =  true;
     }
-
     // If this is a direct Reload previous answers URL, then add hidden fields
     if (isset($loadall) && isset($scid) && isset($loadname) && isset($loadpass)) {
         $aEnterTokenData['bDirectReload'] =  true;
@@ -975,8 +972,11 @@ function buildsurveysession($surveyid,$preview=false)
         $aEnterTokenData['sLoadname'] =  htmlspecialchars($loadname);
         $aEnterTokenData['sLoadpass'] =  htmlspecialchars($loadpass);
     }
+
+
     $FlashError = "";
-    // NO TOKEN REQUIRED BUT CAPTCHA ENABLED FOR SURVEY ACCESS
+
+    // Scenario => Captcha required
    if($scenarios['captchaRequired'] && !$preview)
     {
         //Apply the captchaEnabled flag to the partial
@@ -988,7 +988,6 @@ function buildsurveysession($surveyid,$preview=false)
             { // was a bad answer
                 $FlashError.=gT("The content of the captcha is incorrect.")."<br/>\n";
             }
-
             $renderCaptcha='main';
         }
         else{
@@ -996,9 +995,12 @@ function buildsurveysession($surveyid,$preview=false)
             $renderCaptcha='correct';
         }
     }
+    // Scenario => Token required
     if ($scenarios['tokenRequired'] && !$preview){
+        //Test if token is valid
         if(!$subscenarios['tokenValid'])
         {
+            //Check if there is a clienttoken set
             if((!isset($clienttoken) || $clienttoken==""))
             {
                 if (isset($thissurvey) && $thissurvey['allowregister'] == "Y")
@@ -1011,7 +1013,7 @@ function buildsurveysession($surveyid,$preview=false)
                 }
             } 
             else
-            {
+            { //token was wrong
                 $errorMsg= "".
                   gT("This is a controlled survey. You need a valid token to participate.")."<br /><br />\n"
                 . gT("The token you have provided is either not valid, or has already been used.")."<br /><br />\n"
@@ -1032,10 +1034,12 @@ function buildsurveysession($surveyid,$preview=false)
         }
     }
 
+    //If there were errors, display through yii->FlashMessage
     if($FlashError !== ""){
         Yii::app()->user->setFlash('error', $FlashError );
     }
 
+    //Check which way should be rendered 
     if($renderToken!==$renderCaptcha)
     {
         if($renderCaptcha==="correct" || $renderToken==="correct")
@@ -1057,13 +1061,11 @@ function buildsurveysession($surveyid,$preview=false)
     }
 
     switch($renderWay){
-        case "main":
+        case "main": //Token required, maybe Captcha required
             sendCacheHeaders();
             doHeader();
-            // No or bad answer to required security question
             $redata = compact(array_keys(get_defined_vars()));
             echo templatereplace(file_get_contents($sTemplateViewPath."startpage.pstpl"),array(),$redata,'frontend_helper[875]');
-            //echo makedropdownlist();
             echo templatereplace(file_get_contents($sTemplateViewPath."survey.pstpl"),array(),$redata,'frontend_helper[877]');
 
             // render token form
@@ -1077,13 +1079,13 @@ function buildsurveysession($surveyid,$preview=false)
             doFooter();
             exit; 
             break;
-        case "register":
+        case "register": //Register new user
             // Add the event and test if done
             Yii::app()->runController("register/index/sid/{$surveyid}");
             Yii::app()->end();
             echo templatereplace(file_get_contents($sTemplateViewPath."register.pstpl"),array(),$redata,'frontend_helper[1751]');
             break;
-        case "correct":
+        case "correct": //Nothing to hold back, render survey
         default:
             break;
     }
