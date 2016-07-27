@@ -22,25 +22,24 @@
                     'class' => '"col-sm-6 control-label captchaimage' + '$sKpClass"'
                     ));
                 ?>
-            </div>
+            </div>          
             <div class="col-xs-12 col-sm-8">
                 <div class="row form-group">
                     <div class="col-xs-4">
-                        <?php echo CHtml::image($bCaptchaImgSrc, 'DORE', array(
-                            'class' => 'col-sm-12 control-label ', //+ '$sKpClass"',
-                            'id' => 'captchaimage',
-                            'alt' => 'captcha'
-                        )); ?></div>
+                            <?php $this->widget('CCaptcha',array(
+                                'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
+                                'buttonType' => 'button',
+                                'buttonLabel' => gt('Reload Captcha')
+                            )); ?>
+                    </div>
                     <div class="col-xs-8">
                         <?php echo CHtml::textField('loadsecurity', '', array(
                             'id' => 'captchafield',
-                            'class' => 'text form-control ',// + '$sKpClass',
-                            'size' => 5,
-                            'maxlength' => 3
+                            'class' => 'text input-sm form-control '.$sKpClass,
                         )) ?>
                     </div>
                 </div>
-            </div>
+            </div>           
         </div>
         <!-- Submit area -->
         <div class="row form-group">

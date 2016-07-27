@@ -31,13 +31,13 @@
             <div class="col-xs-12 col-sm-8">
                 <?php if(!isset($token)): ?>
                 <?php echo CHtml::passwordField('token', '', array(
-                    'class' => 'text form-control '.$sKpClass,
+                    'class' => 'text input-sm form-control '.$sKpClass,
                     'id' => 'token'));
                 ?>
                 <?php else: ?>
-                <?php echo CHtml::textField('visibleToken', $visibleToken, array(
+                <?php echo CHtml::passwordField('visibleToken', $visibleToken, array(
                     'id' => 'visibleToken',
-                    'class' => '"text form-control '.$sKpClass,
+                    'class' => 'text input-sm form-control '.$sKpClass,
                     'disabled'=>'disabled',
                     'data-value' => $visibleToken,
                     'value' => $visibleToken,
@@ -68,7 +68,7 @@
         <?php endif; ?>
 
 
-        <?php if ($bCaptchaEnabled): ?>
+        <?php if (isset($bCaptchaEnabled)): ?>
         <div class="row form-group">
             <div class="col-xs-12 col-sm-4">
                 <?php echo CHtml::label(gT("Security question"), 'captchafield', array(
@@ -80,18 +80,16 @@
             <div class="col-xs-12 col-sm-8">
                 <div class="row form-group">
                     <div class="col-xs-4">
-                        <?php echo CHtml::image($bCaptchaImgSrc, 'DORE', array(
-                            'class' => 'col-sm-12 center-block '.$sKpClass,
-                            'id' => 'captchaimage',
-                            'alt' => 'captcha'
-                        )); ?>
+                            <?php $this->widget('CCaptcha',array(
+                                'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
+                                'buttonType' => 'button',
+                                'buttonLabel' => gt('Reload image'),
+                            )); ?>
                     </div>
                     <div class="col-xs-8">
                         <?php echo CHtml::textField('loadsecurity', '', array(
                             'id' => 'captchafield',
-                            'class' => 'text form-control '.$sKpClass,
-                            'size' => 5,
-                            'maxlength' => 3
+                            'class' => 'text input-sm form-control '.$sKpClass,
                         )) ?>
                     </div>
                 </div>
