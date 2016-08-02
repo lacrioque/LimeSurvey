@@ -36,6 +36,15 @@ class RegisterController extends LSYii_Controller {
     */
     private $sMailMessage;
 
+    public function actions()
+    {
+        return array(
+            'captcha' => array(
+                'class' => 'CCaptchaAction', 
+                'backColor'=>0xf6f6f6
+            )
+        );
+    }
     public function actionAJAXRegisterForm($surveyid)
     {
         Yii::app()->loadHelper('database');
