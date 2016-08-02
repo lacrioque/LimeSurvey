@@ -1042,6 +1042,10 @@ function buildsurveysession($surveyid,$preview=false)
     //Check which way should be rendered 
     if($renderToken!==$renderCaptcha)
     {
+        if($renderToken==="register")
+        {
+            $renderWay="register";
+        }
         if($renderCaptcha==="correct" || $renderToken==="correct")
         {
             $renderWay="main";
