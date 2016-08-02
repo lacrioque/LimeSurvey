@@ -45,6 +45,7 @@ class RegisterController extends LSYii_Controller {
             )
         );
     }
+
     public function actionAJAXRegisterForm($surveyid)
     {
         Yii::app()->loadHelper('database');
@@ -82,6 +83,7 @@ class RegisterController extends LSYii_Controller {
             $iSurveyId=$sid;
         else
             $iSurveyId=Yii::app()->request->getPost('sid');
+
         $oSurvey=Survey::model()->find("sid=:sid",array(':sid'=>$iSurveyId));
 
         $sLanguage = Yii::app()->request->getParam('lang');
@@ -193,9 +195,15 @@ class RegisterController extends LSYii_Controller {
         $aData['bCaptcha'] = function_exists("ImageCreate") && isCaptchaEnabled('registrationscreen', $aSurveyInfo['usecaptcha']);
         $aReplacement['REGISTERFORM']=$this->renderPartial('registerForm',$aData,true);
         if(is_array($this->aRegisterErrors))
-            $sRegisterError=implode('<br />',$this->aRegisterErrors);
+        {
+            $sRegisterError="<div class='alert alert-danger' role='alert'>"
+            .implode('<br />',$this->aRegisterErrors)
+            ."</div>";
+        }
         else
+        {
             $sRegisterError='';
+        }
 
         $aReplacement['REGISTERERROR'] = $sRegisterError;
         $aReplacement['REGISTERMESSAGE1'] = gT("You must be registered to complete this survey");
@@ -459,6 +467,8 @@ class RegisterController extends LSYii_Controller {
         $aData['aRegisterErrors']=$this->aRegisterErrors;
         $aData['sMessage']=$this->sMessage;
 
+            $oTemplate = Template::model()->getInstance('', $iSurveyId);
+            Yii::app()->clientScript->registerPackage( 'survey-template' );
         sendCacheHeaders();
         doHeader();
         $aViewData['sTemplate']=$sTemplate;
@@ -471,14 +481,16 @@ class RegisterController extends LSYii_Controller {
         $aViewData['aData']=$aData;
         // Test if we come from index or from register
         if(empty(App()->clientScript->scripts)){
+            $oTemplate = Template::model()->getInstance('', $iSurveyId);
+            Yii::app()->clientScript->registerPackage( 'survey-template' );
             App()->getClientScript()->registerPackage('jqueryui');
             App()->getClientScript()->registerPackage('jquery-touch-punch');
             App()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."survey_runtime.js");            
             useFirebug();
             $this->render('/register/display',$aViewData);
         }else{
-            // urvey/index need renderPartial
-            $this->renderPartial('/register/display',$aViewData);
+            // Survey/index need renderPartial
+            echo $this->renderPartial('/register/display',$aViewData, true, true);
         }
         doFooter();
     }
