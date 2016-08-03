@@ -121,8 +121,8 @@ function setPickerOptions(input)
     return {
         // set minimum and maximum date
         // remove the time component for Firefox
-        minDate: Date.parseString(datemin.substr(0,10), "yyyy-mm-dd"),
-        maxDate: Date.parseString(datemax.substr(0,10), "yyyy-mm-dd"),
+        minDate: moment(datemin.substr(0,10), "yyyy-mm-dd"),
+        maxDate: moment(datemax.substr(0,10), "yyyy-mm-dd"),
         yearRange: datemin.substr(0,4)+':'+datemax.substr(0,4),
         //set the other options so datetimepicker is either a datepicker or a timepicker or both
         showTimepicker: bshowTimepicker,
@@ -165,6 +165,7 @@ function validateInput(basename)
 
 
 function dateUpdater() {
+    var thisid,iYear,iMonth,iDay,iHour,iMinute;
     if(this.id.substr(0,3)=='yea')
     {
         thisid=this.id.substr(4);
@@ -250,9 +251,9 @@ function dateUpdater() {
                 iMinute=$('#minute'+thisid).val();
             }
             ValidDate(this,iYear+'-'+iMonth+'-'+iDay);
-            parseddate=Date.parseString(trim(iDay+'-'+iMonth+'-'+iYear+' '+iHour+':'+iMinute), 'dd-mm-yy H:M');
-            parseddate=parseddate.format($('#dateformat'+thisid).val());
-            $('#answer'+thisid).val(parseddate);
+            var parseddate = moment(trim(iDay+'-'+iMonth+'-'+iYear+' '+iHour+':'+iMinute), "dd-mm-yyyy hh:mm");
+            var formatteddate=parseddate.format($('#dateformat'+thisid).val());
+            $('#answer'+thisid).val(formatteddate);
             $('#answer'+thisid).change();
         }
 }
