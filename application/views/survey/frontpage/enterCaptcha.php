@@ -1,15 +1,20 @@
 <div class="tokenmessage-wrapper">
-    <?php if (isset($secerror)): ?>
-        <span class='error'>$secerror</span><br/>
+    <?php if (isset($error)): ?>
+        <span class='error'>$error</span><br/>
     <?php endif; ?>
     <script type='text/javascript'>var focus_element = '#captchafield';</script>
-    <div class="row">
-        <div class="col-md-12">
-            <p id="tokenmessage">
-                <?php eT("Please confirm access to survey by answering the security question below and click continue."); ?><br/>
-            </p>
+    <div class='jumbotron'>
+        <div id="tokenmessage" class="container clearfix">
+            <h3>
+                <?php eT("Please confirm access to survey by answering the security question below."); ?><br/>
+            </h3>
         </div>
     </div>
+        <?php if (isset($errorMessage)): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo $errorMessage; ?> 
+    </div>
+    <?php endif; ?>
     <div class="row">
         <?php echo CHtml::beginForm(array("/survey/index/sid/.$iSurveyId."), 'post', array(
             'id' => 'tokenform',

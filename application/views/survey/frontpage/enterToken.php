@@ -1,25 +1,30 @@
 <div class="tokenmessage-wrapper">
-    <?php if (isset($secerror)): ?>
-        <span class='error'>$secerror</span><br/>
+    <?php if (isset($error)): ?>
+        <span class='error'>$error</span><br/>
     <?php endif; ?>
     <script type='text/javascript'>var focus_element = '#token';</script>
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
-            <p id="tokenmessage">
-                <?php eT("This is a controlled survey. You need a valid token to participate."); ?><br/>
-                <?php if(!isset($token)): ?>
-                <?php eT("If you have been issued a token, please enter it in the box below and click continue."); ?>
-                <?php else: ?>
-                <?php eT("Please confirm the token by answering the security question below and click continue."); ?>
-                <?php endif; ?>
+    <div class='jumbotron'>
+        <div id="tokenmessage" class="container clearfix">
+            <h3><?php eT("This is a controlled survey, you need a valid token to participate."); ?></h3>
+            <?php if(!isset($token)): ?>
+            <h3><small><?php eT("If you have been issued a token, please enter it in the box below and click continue."); ?></small></h3>
+            <?php else: ?>
+            <h3><small><?php eT("Please confirm the token by answering the security question below and click continue."); ?></small></h3>
+            <?php endif; ?>
             </p>
         </div>
     </div>
 
+    <?php if (isset($errorMessage)): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo $errorMessage; ?> 
+    </div>
+    <?php endif; ?>
+
     <div class="row">
         <?php echo CHtml::beginForm(array("/survey/index/sid/.$iSurveyId."), 'post', array(
             'id' => 'tokenform',
-            'class' => 'col-sm-12 col-md-8 col-md-offset-2'
+            'class' => 'col-sm-12 col-md-10 col-md-offset-1'
         )); ?>
         <div class="row form-group">
             <div class="col-sm-12 col-md-4">

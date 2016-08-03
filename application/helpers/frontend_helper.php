@@ -1014,8 +1014,7 @@ function buildsurveysession($surveyid,$preview=false)
             } 
             else
             { //token was wrong
-                $errorMsg= "".
-                  gT("This is a controlled survey. You need a valid token to participate.")."<br /><br />\n"
+                $errorMsg= ""
                 . gT("The token you have provided is either not valid, or has already been used.")."<br /><br />\n"
                 . sprintf( gT("For further information please contact %s"), $thissurvey['adminname'])
                 . "(<a href='mailto:".$thissurvey['adminemail']."'>"
@@ -1036,7 +1035,7 @@ function buildsurveysession($surveyid,$preview=false)
 
     //If there were errors, display through yii->FlashMessage
     if($FlashError !== ""){
-        Yii::app()->user->setFlash('error', $FlashError );
+        $aEnterTokenData['errorMessage'] = $FlashError;
     }
 
     //Check which way should be rendered 
