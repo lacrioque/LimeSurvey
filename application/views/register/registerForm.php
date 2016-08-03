@@ -1,4 +1,4 @@
-<?php echo CHtml::form($urlAction,'post',array('id'=>'limesurvey', 'role' => 'form', 'class' => 'form-horizontal col-sm-12 col-md-8 col-md-offset-2')); ?>
+<?php echo CHtml::form($urlAction,'post',array('id'=>'limesurvey', 'role' => 'form', 'class' => 'form-horizontal col-sm-12 col-md-10 col-md-offset-1')); ?>
     <input type="hidden" name="lang" value="<?php echo $sLanguage; ?>" id="register_lang" />
     <div class='form-group col-sm-12'>
         <label for='register_firstname' class='control-label col-md-2'><?php eT("First name"); ?></label>
@@ -28,17 +28,15 @@
     <?php } ?>
     <?php if($bCaptcha){ ?>
         <div class='form-group col-sm-12'>
-            <label class="control-label  col-md-6">
-                <div for='loadsecurity' class='col-sm-12'><?php eT("Please enter this letters into the field"); ?></div>
-                <div class="col-sm-12">
-                    <?php $this->widget('CCaptcha',
-                        array(
-                            'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
-                            'buttonType' => 'button',
-                            'buttonLabel' => gt('Reload Captcha')
-                        )); ?>
-                </div>
-            </label>
+            <div class="col-md-6">
+                <p><?php eT("Please enter this letters into the field"); ?></p>
+                <?php $this->widget('CCaptcha',
+                    array(
+                        'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
+                        'buttonType' => 'button',
+                        'buttonLabel' => gt('Reload Captcha')
+                    )); ?>
+            </div>
             <div class="col-md-6">
                 <div>&nbsp;</div>
                 <?php echo CHtml::textField('loadsecurity', '',array('id'=>'loadsecurity','class'=>'form-control input-sm','required'=>'required')); ?>
