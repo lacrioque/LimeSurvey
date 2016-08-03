@@ -19,16 +19,16 @@
     <div class="row">
         <?php echo CHtml::beginForm(array("/survey/index/sid/.$iSurveyId."), 'post', array(
             'id' => 'tokenform',
-            'class' => 'col-xs-12 col-sm-8 col-sm-offset-2'
+            'class' => 'col-sm-12 col-md-8 col-md-offset-2'
         )); ?>
         <div class="row form-group">
-            <div class="col-xs-12 col-sm-4">
+            <div class="col-sm-12 col-md-4">
                 <?php echo CHtml::label(gT("Token"), 'token', array(
                     'class' => 'control-label '.$sKpClass,
                     ));
                 ?>
             </div>
-            <div class="col-xs-12 col-sm-8">
+            <div class="col-sm-12 col-md-8">
 
                 <?php if(!isset($token)): ?>
                 <?php echo CHtml::passwordField('token', '', array(
@@ -71,34 +71,25 @@
 
 
         <?php if (isset($bCaptchaEnabled)): ?>
-        <div class="row form-group">
-            <div class="col-xs-12 col-sm-4">
-                <?php echo CHtml::label(gT("Security question"), 'captchafield', array(
-                    'class' => ' control-label captchaimage '.$sKpClass
-                    ));
-                ?>
+            <div class="row form-group">        
+                <label class="col-sm-6 control-label">
+                    <div for='loadsecurity' class='col-xs-12'><?php eT("Please enter this letters into the field"); ?></div>
+                        <?php $this->widget('CCaptcha',array(
+                            'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
+                            'buttonType' => 'button',
+                            'buttonLabel' => gt('Reload Captcha')
+                        )); ?>
+                </label>
+                <div class="col-sm-6">
+                    <div>&nbsp;</div>
+                    <?php echo CHtml::textField('loadsecurity', '', array(
+                        'id' => 'captchafield',
+                        'class' => 'text input-sm form-control '.$sKpClass,
+                        'required' => 'required'
+                    )) ?>
+                </div>     
             </div>
-            
-            <div class="col-xs-12 col-sm-8">
-                <div class="row form-group">
-                    <div class="col-xs-4">
-                            <?php $this->widget('CCaptcha',array(
-                                'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
-                                'buttonType' => 'button',
-                                'buttonLabel' => gt('Reload image'),
-                            )); ?>
-                    </div>
-                    <div class="col-xs-8">
-                        <?php echo CHtml::textField('loadsecurity', '', array(
-                            'id' => 'captchafield',
-                            'class' => 'text input-sm form-control '.$sKpClass,
-                            'required' => 'required'
-                        )) ?>
-                    </div>
-                </div>
-            </div>
-            <?php endif; ?>
-        </div>
+        <?php endif; ?>
         <!-- Submit area -->
         <div class="row form-group">
             <span class='col-md-4 col-md-offset-8'>
