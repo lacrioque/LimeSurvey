@@ -351,8 +351,13 @@ class UserAction extends Survey_Common_Action
             (Permission::model()->hasGlobalPermission('users','update') && $sresultcount > 0) )
             {
                 $sresult = User::model()->parentAndUser($postuserid);
+                if(empty($sresult))
+                {
+                    Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
+                    $this->getController()->redirect(array("admin/user/sa/index"));
+                }
                 $aData = array();
-                $aData['mur'] = $sresult;
+                $aData['aUserData'] = $sresult;
 
                 $aData['fullpagebar']['savebutton']['form'] = 'moduserform';
                 $aData['fullpagebar']['closebutton']['url'] = 'admin';  // Close button
@@ -391,9 +396,8 @@ class UserAction extends Survey_Common_Action
         {
             $users_name = html_entity_decode($postuser, ENT_QUOTES, 'UTF-8');
             $email = html_entity_decode($postemail, ENT_QUOTES, 'UTF-8');
-            $sPassword = html_entity_decode(Yii::app()->request->getPost('pass'), ENT_QUOTES, 'UTF-8');
-            if ($sPassword == '%%unchanged%%')
-                $sPassword = '';
+            $sPassword = Yii::app()->request->getPost('password');
+
             $full_name = html_entity_decode($postfull_name, ENT_QUOTES, 'UTF-8');
 
             if (!validateEmailAddress($email))
@@ -404,8 +408,8 @@ class UserAction extends Survey_Common_Action
             else
             {
                 $oRecord = User::model()->findByPk($postuserid);
-                $oRecord->email= $this->escape($email);
-                $oRecord->full_name= $this->escape($full_name);
+                $oRecord->email= $email;
+                $oRecord->full_name= $full_name;
                 if (!empty($sPassword))
                 {
                     $oRecord->password= hash('sha256', $sPassword);
@@ -419,19 +423,13 @@ class UserAction extends Survey_Common_Action
                 }
                 elseif ($uresult && !empty($sPassword)) // When saved successfully
                 {
-                    if ($sPassword != 'password')
-                        Yii::app()->session['pw_notify'] = FALSE;
-                    if ($sPassword == 'password')
-                        Yii::app()->session['pw_notify'] = TRUE;
-
+                    Yii::app()->session['pw_notify'] = $sPassword != '';
                     if ($display_user_password_in_html === true) {
                         $displayedPwd = htmlentities($sPassword);
                     }
-                    else
-                    {
+                    else {
                         $displayedPwd = preg_replace('/./', '*', $sPassword);
                     }
-
                     Yii::app()->setFlashMessage( gT("Success!") .' <br/> '.gT("Password") . ": " . $displayedPwd, 'success');
                     $this->getController()->redirect(array("/admin/user/sa/modifyuser/uid/".$postuserid));
                 }
@@ -676,9 +674,21 @@ class UserAction extends Survey_Common_Action
             'dateformat' => Yii::app()->request->getPost('dateformat'),
             'htmleditormode' => Yii::app()->request->getPost('htmleditormode'),
             'questionselectormode' => Yii::app()->request->getPost('questionselectormode'),
-            'templateeditormode' => Yii::app()->request->getPost('templateeditormode')
+            'templateeditormode' => Yii::app()->request->getPost('templateeditormode'),
+            'full_name'=> Yii::app()->request->getPost('fullname'),
+            'email'=> Yii::app()->request->getPost('email')
             );
-
+            if (Yii::app()->request->getPost('password')!='')
+            {
+                if (Yii::app()->request->getPost('password')==Yii::app()->request->getPost('repeatpassword'))
+                {
+                    $aData['password']=hash( "sha256",Yii::app()->request->getPost('password'));
+                }
+                else
+                {
+                    Yii::app()->setFlashMessage(gT("Your new password was not saved because the passwords did not match."),'error');
+                }
+            }
             $uresult = User::model()->updateByPk(Yii::app()->session['loginID'], $aData);
 
             if (Yii::app()->request->getPost('lang')=='auto')
@@ -697,7 +707,7 @@ class UserAction extends Survey_Common_Action
             Yii::app()->session['questionselectormode'] = Yii::app()->request->getPost('questionselectormode');
             Yii::app()->session['templateeditormode'] = Yii::app()->request->getPost('templateeditormode');
             Yii::app()->session['dateformat'] = Yii::app()->request->getPost('dateformat');
-            Yii::app()->session['flashmessage'] = gT("Your personal settings were successfully saved.");
+            Yii::app()->setFlashMessage(gT("Your personal settings were successfully saved."));
             if (Yii::app()->request->getPost("saveandclose")) {
                 $this->getController()->redirect(array("admin/survey/sa/index"));
             }
@@ -709,6 +719,9 @@ class UserAction extends Survey_Common_Action
         // Get user lang
         $user = User::model()->findByPk(Yii::app()->session['loginID']);
         $aData['sSavedLanguage'] = $user->lang;
+        $aData['sUsername'] = $user->users_name;
+        $aData['sFullname'] = $user->full_name;
+        $aData['sEmailAdress'] = $user->email;
 
         $aData['fullpagebar']['savebutton']['form'] = 'personalsettings';
         $aData['fullpagebar']['saveandclosebutton']['form'] = 'personalsettings';

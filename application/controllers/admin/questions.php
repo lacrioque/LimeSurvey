@@ -900,11 +900,18 @@ class questions extends Survey_Common_Action
     }
 
     /**
+    * AJAX Method to QuickAdd multiple Rows AJAX-based
+    */
+    public function getSubquestionRowQuickAdd( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible='' )
+    {
+        echo $this->getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible='' );
+    }
+    /**
      * This function should be called via ajax request
      * It returns a EMPTY subquestion row HTML for a given ....
      */
 
-    public function getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible )
+    public function getSubquestionRow( $surveyid, $gid, $qid, $codes, $language, $first, $scale_id, $type, $position, $assessmentvisible='' )
     {
         // index.php/admin/questions/sa/getSubquestionRow/position/1/scale_id/1/surveyid/691948/gid/76/qid/1611/language/en/first/true
         $stringCodes = json_decode($codes); // All the codes of the displayed subquestions
@@ -912,7 +919,10 @@ class questions extends Survey_Common_Action
         // TODO: calcul correct value
         $oldCode  = false;
 
-
+        //Capture "true" and "false" as strings
+        if(is_string($first)){
+            $first = ($first == "false" ? false : true);
+        }
         // We get the numerical part of each code and we store them in Arrays
         // One array is to store the pure numerical values (so we can search in it for the greates value, and increment it)
         // Another array is to store the string values (so we keep all the prefixed "0")
@@ -1347,10 +1357,13 @@ class questions extends Survey_Common_Action
                 $aData['selectormodeclass'] = $selectormodeclass;
             }
 
-            if (!$adding)
-                $qattributes = questionAttributes();
-            else
-                $qattributes = array();
+            /**
+             * Since is moved via ajax call only : it's not needed, when we have time : readd it for no-js solution
+             */
+            //~ if (!$adding)
+                //~ $qattributes = \ls\helpers\questionHelper::getQuestionAttributesSettings(($aqresult->type); //(or Question::getAdvancedSettingsWithValues )
+            //~ else
+                //~ $qattributes = array();
 
             if ($adding)
             {
@@ -1708,14 +1721,15 @@ class questions extends Survey_Common_Action
     */
     public function ajaxquestionattributes()
     {
+
         $surveyid = (int) Yii::app()->request->getParam('sid',0);
         $qid = (int) Yii::app()->request->getParam('qid',0);
         $type = Yii::app()->request->getParam('question_type');
         $thissurvey = getSurveyInfo($surveyid);
         if(!$thissurvey) die();
         $aLanguages = array_merge(array(Survey::model()->findByPk($surveyid)->language), Survey::model()->findByPk($surveyid)->additionalLanguages);
-
         $aAttributesWithValues = Question::model()->getAdvancedSettingsWithValues($qid, $type, $surveyid);
+
         uasort($aAttributesWithValues, 'categorySort');
 
         $aAttributesPrepared = array();

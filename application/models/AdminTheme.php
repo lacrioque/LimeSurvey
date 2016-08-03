@@ -26,7 +26,7 @@ class AdminTheme extends CFormModel
     public $path;                   // Admin Theme's path
     public $sTemplateUrl;           // URL to reach Admin Theme (used to get CSS/JS/Files when asset manager is off)
     public $config;                 // Contains the Admin Theme's configuration file
-    public $use_asset_manager;      // If true, force the use of asset manager even if debug mode is on (useful to debug asset manager's problems)
+    public static $use_asset_manager;      // If true, force the use of asset manager even if debug mode is on (useful to debug asset manager's problems)
     private static $instance;       // The instance of theme object
 
     /**
@@ -106,7 +106,7 @@ class AdminTheme extends CFormModel
         $this->config  = json_decode( json_encode ( ( array ) simplexml_load_string($sXMLConfigFile), 1));
 
         // If developers want to test asset manager with debug mode on
-        $this->use_asset_manager = isset($this->config->engine->use_asset_manager_in_debug_mode)?( $this->config->engine->use_asset_manager_in_debug_mode == 'true'):'false';
+        self::$use_asset_manager = isset($this->config->engine->use_asset_manager_in_debug_mode)?( $this->config->engine->use_asset_manager_in_debug_mode == 'true'):'false';
 
         $this->defineConstants();           // Define the (still) necessary constants
         $this->registerStylesAndScripts();  // Register all CSS and JS
@@ -133,12 +133,15 @@ class AdminTheme extends CFormModel
         // and move the rest to the bootstrap package.
         // NB: registerAllScripts could be replaced by js definition in package. If needed: not a problem to do it
 
-        Yii::app()->getClientScript()->registerMetaTag('width=device-width, initial-scale=1.0', 'viewport'); // See: https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l108-l115
-        App()->bootstrap->registerAllScripts();                                                              // See : https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l153-l160
+        if (!Yii::app()->request->getQuery('isAjax', false))
+        {
+            Yii::app()->getClientScript()->registerMetaTag('width=device-width, initial-scale=1.0', 'viewport'); // See: https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l108-l115
+            App()->bootstrap->registerAllScripts();                                                               // See : https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l153-l160
 
-        App()->getClientScript()->registerPackage('jqueryui');          // jqueryui
-        App()->getClientScript()->registerPackage('jquery-cookie');     // jquery-cookie
-        App()->getClientScript()->registerPackage('fontawesome');       // fontawesome      ??? TODO: check if needed
+            App()->getClientScript()->registerPackage('jqueryui');          // jqueryui
+            App()->getClientScript()->registerPackage('jquery-cookie');     // jquery-cookie
+            App()->getClientScript()->registerPackage('fontawesome');       // fontawesome      ??? TODO: check if neede
+        }
 
         $aCssFiles = array();
         $aJsFiles= array();
@@ -184,7 +187,7 @@ class AdminTheme extends CFormModel
         // When defining the package with a base path (a directory on the file system), the asset manager is used
         // When defining the package with a base url, the file is directly registerd without the asset manager
         // See : http://www.yiiframework.com/doc/api/1.1/CClientScript#packages-detail
-        if( !YII_DEBUG || $this->use_asset_manager)
+        if( !YII_DEBUG || self::$use_asset_manager || Yii::app()->getConfig('use_asset_manager'))
         {
             Yii::setPathOfAlias('admin.theme.path', $this->path);
             $package['basePath'] = 'admin.theme.path';                          // add the base path to the package, so it will use the asset manager
@@ -214,7 +217,7 @@ class AdminTheme extends CFormModel
     public function registerCssFile( $sPath='template', $sFile='' )
     {
         // We check if we should use the asset manager or not
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             $path = ($sPath == 'PUBLIC')?dirname(Yii::app()->request->scriptFile).'/styles-public/':$this->path . '/css/';         // We get the wanted path
             App()->getClientScript()->registerCssFile(  App()->getAssetManager()->publish($path.$sFile) );                         // We publish the asset
@@ -226,14 +229,20 @@ class AdminTheme extends CFormModel
         }
     }
 
+    public function registerScriptFile( $cPATH, $sFile )
+    {
+        self::staticRegisterScriptFile( $cPATH, $sFile );
+    }
+
     /**
      * Register a Css File from the correct directory (publict style, style, upload, etc) using the correct method (with / whithout asset manager)
      * This function is called from the different controllers when they want to register a specific css file
+     * Static method is necessary to avoid to init the admin theme to register admin_core script... (see: AdminController::_init())
      *
      * @var string $sPath  'SCRIPT_PATH' for root/scripts/ ; 'ADMIN_SCRIPT_PATH' for root/scripts/admin/; else templates/scripts (uppercase is an heritage from 2.06, which was using constants )
      * @var string $sFile   the name of the js file
      */
-    public function registerScriptFile( $cPATH, $sFile )
+    static public function staticRegisterScriptFile( $cPATH, $sFile )
     {
         $bIsInAdminTheme = !($cPATH == 'ADMIN_SCRIPT_PATH' || $cPATH == 'SCRIPT_PATH');                                             // we check if the path required is in Admin Theme itself.
 
@@ -251,7 +260,7 @@ class AdminTheme extends CFormModel
         }
 
         // We check if we should use the asset manager or not
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             App()->getClientScript()->registerScriptFile( App()->getAssetManager()->publish( $path . $sFile ));                      // We publish the asset
         }
@@ -411,7 +420,7 @@ class AdminTheme extends CFormModel
     private function defineConstants()
     {
         // Define images url
-        if (!YII_DEBUG || $this->use_asset_manager)
+        if (!YII_DEBUG || self::$use_asset_manager ||  Yii::app()->getConfig('use_asset_manager'))
         {
             define('LOGO_URL', App()->getAssetManager()->publish( $this->path . '/images/logo.png'));
         }

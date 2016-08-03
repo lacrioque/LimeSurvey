@@ -126,7 +126,7 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
     if(stripos ($line,"{TEMPLATECSS}"))
     {
         // This package is created in model TemplateConfiguration::createTemplatePackage
-        if(!YII_DEBUG)
+        if(!YII_DEBUG ||  Yii::app()->getConfig('use_asset_manager'))
         {
             Yii::app()->clientScript->registerPackage( 'survey-template' );
         }
@@ -165,8 +165,8 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
             }
             else
             {
-                $aCssFiles = $oTemplate->config->files->css->filename;
-                $aJsFiles = $oTemplate->config->files->js->filename;
+                $aCssFiles = (array) $oTemplate->config->files->css->filename;
+                $aJsFiles  = (array) $oTemplate->config->files->js->filename;
 
                 foreach($aCssFiles as $sCssFile)
                 {
@@ -199,7 +199,12 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
     }
     if( isset($oTemplate->config->engine->cssframework) && $oTemplate->config->engine->cssframework)
     {
-        $surveyformat .= " ".$oTemplate->config->engine->cssframework."-engine ";
+        $aCssFramework = (array) $oTemplate->config->engine->cssframework;
+        if( ! empty($aCssFramework) )
+        {
+            $surveyformat .= " ".$oTemplate->config->engine->cssframework."-engine ";
+        }
+
     }
 
     if ((isset(Yii::app()->session['step']) && Yii::app()->session['step'] % 2) && $surveyformat!="allinone")

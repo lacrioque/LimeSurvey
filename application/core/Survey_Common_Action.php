@@ -27,7 +27,7 @@ class Survey_Common_Action extends CAction
     public function __construct($controller=null, $id=null)
     {
         parent::__construct($controller, $id);
-
+        Yii::app()->request->updateNavigationStack();
         // Make sure viewHelper can be autoloaded
         Yii::import('application.helpers.viewHelper');
     }
@@ -164,10 +164,13 @@ class Survey_Common_Action extends CAction
         // iGroupId/gid can be found with qid/iQuestionId
         if(isset($params['iQuestionId']))
         {
-            $oQuestion=Question::model()->find("qid=:qid",array(":qid"=>$params['iQuestionId']));//Move this in model to use cache
-            if($oQuestion)
-            {
-                $params['iGroupId']=$params['gid']=$oQuestion->gid;
+            if((int) $params['iQuestionId'] >0 )
+            { //Check if the transfered iQuestionId is numeric to prevent Errors with postgresql
+                $oQuestion=Question::model()->find("qid=:qid",array(":qid"=>$params['iQuestionId']));//Move this in model to use cache
+                if($oQuestion)
+                {
+                    $params['iGroupId']=$params['gid']=$oQuestion->gid;
+                }
             }
         }
         // iSurveyId/iSurveyID/sid can be found with gid/iGroupId
@@ -533,7 +536,7 @@ class Survey_Common_Action extends CAction
             if(isset($aData['token_bar']['closebutton']['url']))
             {
                 $sAlternativeUrl = $aData['token_bar']['closebutton']['url'];
-                $aData['token_bar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl) , array('tokenify') );
+                $aData['token_bar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl) );
             }
 
             $this->getController()->renderPartial("/admin/token/token_bar", $aData);
@@ -695,10 +698,7 @@ class Survey_Common_Action extends CAction
             if(isset($aData['questiongroupbar']['closebutton']['url']))
             {
                 $sAlternativeUrl = $aData['questiongroupbar']['closebutton']['url'];
-                $aForbiddenWordsInUrl = array(
-                    'add'
-                );
-                $aData['questiongroupbar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer(Yii::app()->createUrl($sAlternativeUrl), $aForbiddenWordsInUrl);
+                $aData['questiongroupbar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer(Yii::app()->createUrl($sAlternativeUrl));
             }
 
             $this->getController()->renderPartial("/admin/survey/QuestionGroups/questiongroupbar_view", $aData);
@@ -712,9 +712,7 @@ class Survey_Common_Action extends CAction
             if(isset($aData['fullpagebar']['closebutton']['url']))
             {
                 $sAlternativeUrl        = '/admin/index';
-                $aForbiddenWordsInUrl[] ='modifyuser';
-                $aForbiddenWordsInUrl[] ='personalsettings';
-                $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl), $aForbiddenWordsInUrl );
+                $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl));
             }
             $this->getController()->renderPartial("/admin/super/fullpagebar_view", $aData);
         }
@@ -876,15 +874,7 @@ class Survey_Common_Action extends CAction
             if(isset($aData['surveybar']['closebutton']['url']))
             {
                 $sAlternativeUrl = $aData['surveybar']['closebutton']['url'];
-                $aForbiddenWordsInUrl = isset($aData['surveybar']['closebutton']['forbidden'])?$aData['surveybar']['closebutton']['forbidden']:array();
-                $aForbiddenWordsInUrl[]='assessmentedit';
-                $aForbiddenWordsInUrl[]='newsurvey';
-                $aForbiddenWordsInUrl[]='editlocalsettings';
-                $aForbiddenWordsInUrl[]='setsurveysecurity';
-                $aForbiddenWordsInUrl[]='importsurveyresources';
-                $aForbiddenWordsInUrl[]='newquestion';
-                $aForbiddenWordsInUrl[]='add';
-                $aData['surveybar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl), $aForbiddenWordsInUrl );
+                $aData['surveybar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl($sAlternativeUrl));
             }
 
             if($aData['gid']==null)
