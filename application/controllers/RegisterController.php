@@ -204,7 +204,7 @@ class RegisterController extends LSYii_Controller {
         {
             $sRegisterError='';
         }
-
+        
         $aReplacement['REGISTERERROR'] = $sRegisterError;
         $aReplacement['REGISTERMESSAGE1'] = gT("You must be registered to complete this survey");
         if($sStartDate=$this->getStartDate($iSurveyId))

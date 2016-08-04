@@ -15,22 +15,24 @@
         <?php echo $errorMessage; ?> 
     </div>
     <?php endif; ?>
-    <div class="row">
+    <div class="container">
         <?php echo CHtml::beginForm(array("/survey/index/sid/.$iSurveyId."), 'post', array(
             'id' => 'tokenform',
-            'class' => 'captcha col-sm-12 col-md-8 col-md-offset-2'
+            'class' => 'form-horizontal col-sm-12 col-md-10 col-md-offset-1'
         )); ?>
-    
-        <div class="row form-group">        
-            <label class="col-sm-6 control-label">
-                <div for='loadsecurity' class='col-sm-12'><?php eT("Please enter this letters into the field"); ?></div>
+       
+        <div class="form-group col-sm-12">        
+            <label class="col-md-4 col-sm-12 control-label">
+                <p class='col-sm-6 col-md-12 remove-padding'><?php eT("Please enter the letters you see below:"); ?></p>
+                  <span class="col-md-12 col-sm-6">  
                     <?php $this->widget('CCaptcha',array(
                         'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
                         'buttonType' => 'button',
-                        'buttonLabel' => gt('Reload Captcha')
+                        'buttonLabel' => gt('Reload image')
                     )); ?>
+                </span>
             </label>
-            <div class="col-sm-6">
+            <div class="col-md-6">
                 <div>&nbsp;</div>
                 <?php echo CHtml::textField('loadsecurity', '', array(
                     'id' => 'captchafield',
@@ -42,7 +44,7 @@
         
         <!-- Submit area -->
         <div class="row form-group">
-            <span class='col-md-4 col-md-offset-8'>
+            <span class='col-sm-12 col-md-3 col-md-offset-9'>
                 <?php echo CHtml::submitButton(gT("Continue"), array('class' => 'btn btn-default btn-block button submit')); ?>
             </span>
         </div>

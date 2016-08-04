@@ -21,41 +21,39 @@
     </div>
     <?php endif; ?>
 
-    <div class="row">
+    <div class="container">
         <?php echo CHtml::beginForm(array("/survey/index/sid/.$iSurveyId."), 'post', array(
             'id' => 'tokenform',
-            'class' => 'col-sm-12 col-md-10 col-md-offset-1'
+            'class' => 'form-horizontal col-sm-12 col-md-10 col-md-offset-1'
         )); ?>
-        <div class="row form-group">
-            <div class="col-sm-12 col-md-4">
-                <?php echo CHtml::label(gT("Token"), 'token', array(
-                    'class' => 'control-label '.$sKpClass,
+        <div class="col-sm-12 form-group">
+                <?php echo CHtml::label(gT("Token: "), 'token', array(
+                    'class' => 'control-label col-sm-12 col-md-4 '.$sKpClass,
                     ));
                 ?>
-            </div>
-            <div class="col-sm-12 col-md-8">
+            <div class="col-sm-12 col-md-6">
 
                 <?php if(!isset($token)): ?>
-                <?php echo CHtml::passwordField('token', '', array(
-                    'class' => 'text input-sm form-control '.$sKpClass,
-                    'required' => 'required',
-                    'id' => 'token'));
-                ?>
+                    <?php echo CHtml::passwordField('token', '', array(
+                        'class' => 'text input-sm form-control '.$sKpClass,
+                        'required' => 'required',
+                        'id' => 'token'));
+                    ?>
                 <?php else: ?>
-                <?php echo CHtml::passwordField('visibleToken', $visibleToken, array(
-                    'id' => 'visibleToken',
-                    'class' => 'text input-sm form-control '.$sKpClass,
-                    'disabled'=>'disabled',
-                    'data-value' => $visibleToken,
-                    'value' => $visibleToken,
-                    ));
-                ?>
-                <?php echo CHtml::hiddenField('token', $token, array(
-                    'class'=>$sKpClass,
-                    'id' => 'token',
-                    'data-value' => $token,
-                    'value' => $token));
-                ?>
+                    <?php echo CHtml::passwordField('visibleToken', $visibleToken, array(
+                        'id' => 'visibleToken',
+                        'class' => 'text input-sm form-control '.$sKpClass,
+                        'disabled'=>'disabled',
+                        'data-value' => $visibleToken,
+                        'value' => $visibleToken,
+                        ));
+                    ?>
+                    <?php echo CHtml::hiddenField('token', $token, array(
+                        'class'=>$sKpClass,
+                        'id' => 'token',
+                        'data-value' => $token,
+                        'value' => $token));
+                    ?>
                 <?php endif; ?>
 
                 <?php echo CHtml::hiddenField('sid', $iSurveyId, array('id' => 'sid')); ?>
@@ -76,14 +74,16 @@
 
 
         <?php if (isset($bCaptchaEnabled)): ?>
-            <div class="row form-group">        
-                <label class="col-sm-6 control-label">
-                    <div for='loadsecurity' class='col-xs-12'><?php eT("Please enter this letters into the field"); ?></div>
+            <div class="col-sm-12 form-group">        
+                <label class="col-md-4 col-sm-12 control-label">
+                    <p class='col-sm-6 col-md-12 remove-padding'><?php eT("Please enter the letters you see below:"); ?></p>
+                    <span class="col-sm-6 col-md-12">
                         <?php $this->widget('CCaptcha',array(
                             'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
                             'buttonType' => 'button',
                             'buttonLabel' => gt('Reload Captcha')
                         )); ?>
+                    </span>
                 </label>
                 <div class="col-sm-6">
                     <div>&nbsp;</div>
@@ -97,7 +97,7 @@
         <?php endif; ?>
         <!-- Submit area -->
         <div class="row form-group">
-            <span class='col-md-4 col-md-offset-8'>
+            <span class='col-sm-12 col-md-3 col-md-offset-9'>
                 <?php echo CHtml::submitButton(gT("Continue"), array('class' => 'btn btn-default btn-block button submit')); ?>
             </span>
         </div>
