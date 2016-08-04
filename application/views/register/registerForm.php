@@ -1,43 +1,50 @@
 <?php echo CHtml::form($urlAction,'post',array('id'=>'limesurvey', 'role' => 'form', 'class' => 'form-horizontal col-sm-12 col-md-10 col-md-offset-1')); ?>
     <input type="hidden" name="lang" value="<?php echo $sLanguage; ?>" id="register_lang" />
     <div class='form-group col-sm-12'>
-        <label for='register_firstname' class='control-label col-md-2'><?php eT("First name"); ?></label>
-        <div class="col-md-10">
+        <label for='register_firstname' class='control-label col-md-4'><?php eT("First name"); ?></label>
+        <div class="col-sm-12 col-md-8">
             <?php echo CHtml::textField('register_firstname', $sFirstName,array('id'=>'register_firstname','class'=>'form-control input-sm')); ?>
         </div>
     </div>
     <div class='form-group col-sm-12'>
-        <label for='register_lastname' class='control-label col-md-2'><?php eT("Last name"); ?></label>
-        <div class="col-md-10">
+        <label for='register_lastname' class='control-label col-md-4'><?php eT("Last name"); ?></label>
+        <div class="col-sm-12 col-md-8">
         <?php echo CHtml::textField('register_lastname', $sLastName,array('id'=>'register_lastname','class'=>'form-control input-sm')); ?>
         </div>
     </div>
     <div class='form-group col-sm-12'>
-        <label for='register_email' class='control-label col-md-2'><?php eT("Email address"); ?></label>
-        <div class="col-md-10">
+        <label for='register_email' class='control-label col-md-4'><?php eT("Email address"); ?></label>
+        <div class="col-sm-12 col-md-8">
         <?php echo CHtml::textField('register_email', $sEmail,array('id'=>'register_email','class'=>'form-control input-sm','required'=>'required')); ?>
         </div>
     </div>
     <?php foreach($aExtraAttributes as $key=>$aExtraAttribute){ ?>
         <div class='form-group col-sm-12'>
-            <label for="register_<?php echo $key; ?>" class='control-label col-md-2'><?php echo $aExtraAttribute['caption']; ?><?php echo $aExtraAttribute['mandatory'] == 'Y' ? '*' : ""; ?></label>
-            <div class="col-md-10">
+            <label for="register_<?php echo $key; ?>" class='control-label col-md-4'><?php echo $aExtraAttribute['caption']; ?><?php echo $aExtraAttribute['mandatory'] == 'Y' ? '*' : ""; ?></label>
+            <div class="col-sm-12 col-md-8">
             <?php echo CHtml::textField("register_{$key}", $aAttribute[$key],array('id'=>"register_{$key}",'class'=>'form-control input-sm')); ?>
             </div>
         </div>
     <?php } ?>
     <?php if($bCaptcha){ ?>
         <div class='form-group col-sm-12'>
-            <div class="col-md-6">
+            <div class="col-sm-12 col-md-4">
                 <p><?php eT("Please enter this letters into the field"); ?></p>
+                <span id='captchablock'>
                 <?php $this->widget('CCaptcha',
                     array(
                         'buttonOptions'=>array('class'=> 'btn btn-xs btn-info'),
                         'buttonType' => 'button',
                         'buttonLabel' => gt('Reload Captcha')
                     )); ?>
+                </span>
+                <script>
+                    if($('#captchablock').find('input').length>1){
+                        $($('#captchablock').find('input').last()).remove();
+                    }
+                </script>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div>&nbsp;</div>
                 <?php echo CHtml::textField('loadsecurity', '',array('id'=>'loadsecurity','class'=>'form-control input-sm','required'=>'required')); ?>
             </div>
