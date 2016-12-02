@@ -41,7 +41,7 @@
 var generalInfoTitle = "<?php eT('Show information abaout this Question/Questiongroup'); ?>";
 </script>
 
-<div id="sideMenuContainer" class="sidemenu-container">
+<div id="sideMenuContainer" class="sidemenu-container <?php if(!$showSideMenu){ echo 'collapsed';}?>">
     <!-- sideMenu -->
     <div class="side-menu hidden-xs" id="sideMenu" style="z-index: 101;">
         <nav class="navbar navbar-default hidden-xs">
@@ -70,7 +70,7 @@ var generalInfoTitle = "<?php eT('Show information abaout this Question/Question
 
                         <!-- chevrons to stretch the side menu -->
                         <?php if (getLanguageRTL($_SESSION['adminlang'])): ?>
-                            <div class='col-sm-5 col-xs-12'>
+                            <div class='col-sm-5 col-xs-12 sidemenu-sizing-buttons'>
                                 <a style="z-index:1000001" class="btn btn-default btn-disabled hide-button hidden-xs opened pull-right" title="<?php eT('Drag to resize'); ?>" data-toggle="tooltip" id="scaleSidebar">
                                     <i class="fa fa-bars" style="transform:rotate(90deg);">&nbsp;</i>
                                 </a>
@@ -80,7 +80,7 @@ var generalInfoTitle = "<?php eT('Show information abaout this Question/Question
 
                             </div>
                         <?php else: ?>
-                            <div class='col-sm-5 col-xs-12'>
+                            <div class='col-sm-5 col-xs-12 sidemenu-sizing-buttons'>
                                 <a style="z-index:1000001" class="btn btn-default btn-disabled hide-button hidden-xs opened pull-right" title="<?php eT('Drag to resize'); ?>" data-toggle="tooltip" id="scaleSidebar">
                                     <i class="fa fa-bars" style="transform:rotate(90deg);">&nbsp;</i>
                                 </a>

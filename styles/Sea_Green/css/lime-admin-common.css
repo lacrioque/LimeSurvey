@@ -581,7 +581,7 @@ div.panel.disabled {
 }
 .sidemenu-container {
   position:fixed;
-  width: 300px;
+  width: 320px;
   float:left; 
   overflow:auto;
   height:95%;
@@ -589,6 +589,21 @@ div.panel.disabled {
   background: #fff;
   z-index:100;
 }
+
+.sidemenu-container.collapsed {
+  width: 65px;
+}
+.sidemenu-container.collapsed .side-menu-container{
+  display: none;
+}
+.sidemenu-container.collapsed #sidemenu-home{
+  display: none;
+}
+.sidemenu-container.collapsed .sidemenu-sizing-buttons{
+  width: 99%;
+  margin: auto;
+}
+
 .side-menu {
   position: relative;
   width: 100%;
