@@ -275,16 +275,22 @@ var SideMenuMovement = function(
         .on('click', onClickCollapseButton);
 };
 
+/**
+ * Define the bindings to the window.
+ * Bind something to scroll and resize events.
+ */
 var WindowBindings = function(){
     var surveybar = $('.surveybar'),
         sideBody = $('.side-body'),
         sidemenu = $('#sideMenu'),
         sidemenuContainer = $('#sideMenuContainer'),
+        sidemenuInnerContainer = $('.side-menu-container '),
         upperContainer = $('#in_survey_common'),
     
     //calculated vars
         maxHeight =  $(window).height() - $('#in_survey_common').offset().top - 10,
         basePosition = {top: 0, left: 0},
+        
     //methods
         //create the first setting and calculate therefor
         setInitial = function(){
@@ -294,16 +300,16 @@ var WindowBindings = function(){
         },
         //Stick the side menu and the survey bar to the top
         onWindowScroll = function(e){
-            var $toTop = (surveybar.offset().top - $(window).scrollTop());
-            var topPosition = (basePosition.top - $(window).scrollTop());
-            sidemenuContainer.css({position:"absolute", top: 'auto'});
-
-            if($toTop <= 0)
+            var $toTop = (surveybar.offset().top - $(window).scrollTop()); //Difference between surveybar and windowtop
+            var topPosition = (basePosition.top - $(window).scrollTop()); //Difference between sidemenu and windowtop
+            sidemenuContainer.css({position:"absolute", top: 'auto'}); // define the sidemenu to be absolutely positiond at the top
+            //when the surveybar hits the top freeze it and the sidemenu where they are
+            if($toTop <= 0) 
             {
                 surveybar.addClass('navbar-fixed-top');
                 sidemenuContainer.css({position:"fixed", top: "45px"});
             }
-
+            //if it is more than 0 but less than 45 remove the fixed class
             if ($(window).scrollTop() <= 45)
             {
                 surveybar.removeClass('navbar-fixed-top');
@@ -311,15 +317,11 @@ var WindowBindings = function(){
         },
         //fixSizings
         onWindowResize = function(){
-            maxHeight       = ($(window).height()-95);
-            // console.log("body", $('body').height());
-            // console.log("base", basePosition.top);
-            // console.log("footer", $('footer').height());
-            // console.log("maxHeight", maxHeight);
-
-            //maxHeightInside = (maxHeight - $('#in_survey_common').offset().top-2);
-            sidemenu.css({'height': maxHeight, "overflow-y": 'auto'});
+            maxHeight           = ($(window).height() - 65);
+            var maxInnerHeight  =  maxHeight - 95;
             sidemenuContainer.css({'max-height': (maxHeight)});
+            sidemenu.css({'max-height': (maxHeight)});
+            sidemenuInnerContainer.css({float: 'left', clear:'both','overflow-y': 'auto', height: maxInnerHeight});
         }
     
     setInitial();
